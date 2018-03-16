@@ -30,5 +30,5 @@
 + (NSArray *)defaultButtons;
 - (CGPoint) offsetButtonPosition;
 - (id)initWithFrame:(CGRect)frame buttons:(NSArray *)buttons;
-
+- (void)setRoundedView:(UIView *)roundedView toDiameter:(CGFloat)newSize;
 @end
