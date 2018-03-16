@@ -78,7 +78,6 @@
     self.digitsTextField.textColor = [self.mainColor colorWithAlphaComponent:0.9];
     
     self.formatTextToPhoneNumber = YES;
-    self.regionCode = @"US";
     self.rawText = @"";
 }
 
@@ -119,8 +118,6 @@
             button.input = @"*";
         } else if ([main isEqualToString:@"＃"]) {
             button.input = @"#";
-        } else if ([main isEqualToString:@"0"]) {
-            button.longPressInput = @"+";
         }
         [ret addObject:button];
     }];
@@ -169,21 +166,9 @@
     }
 }
 
--(void)didHoldButton:(UILongPressGestureRecognizer *)recognizer
-{
-    if (recognizer.state != UIGestureRecognizerStateBegan)
-        return;
-    JCPadButton *button = (JCPadButton *)recognizer.view;
-    if (![self.delegate respondsToSelector:@selector(dialPad:shouldInsertText:forLongButtonPress:)] ||
-        [self.delegate dialPad:self shouldInsertText:button.longPressInput forLongButtonPress:button]) {
-        [self appendText:button.longPressInput];
-    }
-}
-
-
 - (void)setRawText:(NSString *)rawText
 {
-    self.numFormatter = [[NBAsYouTypeFormatter alloc] initWithRegionCode:self.regionCode];
+    self.numFormatter = [[NBAsYouTypeFormatter alloc] initWithRegionCode:@"US"];
     _rawText = @"";
     self.digitsTextField.text = @"";
     for (int i = 0; i < rawText.length; ++i) {
@@ -268,6 +253,11 @@
     [self.contentView addSubview:self.deleteButton];
 }
 
+- (CGPoint) offsetButtonPosition
+{
+    return CGPointMake(0,0);
+}
+
 - (void)layoutButtons
 {
     NSInteger count                       = self.buttons.count;
@@ -294,6 +284,8 @@
         topRowTop = highestTopAllowed + 24;
     }
     
+    CGPoint offset = [self offsetButtonPosition];
+    
     [self.buttons enumerateObjectsUsingBlock:^(JCPadButton *btn, NSUInteger idx, BOOL *stop) {
         NSInteger row = idx / 3;
         NSInteger btnsInRow = MIN(3, count - (row * 3));
@@ -303,7 +295,7 @@
         CGFloat rowWidth = (btn.width * btnsInRow) + (horizontalButtonPadding * (btnsInRow-1));
         
         CGFloat left = center - (rowWidth/2) + (cellWidth*col);
-        [self setUpButton:btn left:left top:top];
+        [self setUpButton:btn left:left+offset.x top:top+offset.y];
     }];
 }
 
@@ -311,12 +303,6 @@
 {
     button.frame = CGRectMake(left, top, JCPadButtonWidth, JCPadButtonHeight);
     [button addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIGestureRecognizer *rec = [[UILongPressGestureRecognizer alloc]
-                                initWithTarget:self
-                                        action:@selector(didHoldButton:)];
-    [button addGestureRecognizer:rec];
-    
     [self.contentView addSubview:button];
     [self setRoundedView:button toDiameter:JCPadButtonHeight];
 }
