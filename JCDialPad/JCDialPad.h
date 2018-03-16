@@ -15,6 +15,10 @@
 @property (strong, nonatomic) NSString *rawText;
 @property (nonatomic) BOOL formatTextToPhoneNumber;
 
+@property (nonatomic, strong) UIView* contentView;
+@property (nonatomic, strong) UIView* backgroundBlurringView;
+@property (nonatomic, strong) NBAsYouTypeFormatter *numFormatter;
+
 @property (nonatomic, strong) UIView* backgroundView;
 @property (assign, nonatomic) BOOL showDeleteButton;
 
