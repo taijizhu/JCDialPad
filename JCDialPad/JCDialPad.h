@@ -1,3 +1,4 @@
+#import "NBAsYouTypeFormatter.h"
 
 @class JCDialPad, JCPadButton;
 
